@@ -4,8 +4,7 @@ import math
 from pygame import mixer
  
 
-#invader x pos change
-invader_x_change = 0.5
+
 
 # initializing pygame
 pygame.init()
@@ -20,7 +19,6 @@ screen = pygame.display.set_mode((screen_width,
 pygame.display.set_caption("Welcome to Space\
 Invaders Game by:- styles")
  
- 
 # Score
 score_val = 0
 scoreX = 5
@@ -30,16 +28,7 @@ font = pygame.font.Font('freesansbold.ttf', 20)
 # Game Over
 game_over_font = pygame.font.Font('freesansbold.ttf', 64)
  
- 
-def show_score(x, y):
-    score = font.render("Points: " + str(score_val),
-                        True, (255,255,255))
-    screen.blit(score, (x , y ))
- 
-def game_over():
-    game_over_text = game_over_font.render("GAME OVER",
-                                           True, (255,255,255))
-    screen.blit(game_over_text, (190, 250))
+
  
 # Background Sound
 mixer.music.load('data/background.wav')
@@ -58,18 +47,8 @@ invader_Y = []
 invader_Xchange = []
 invader_Ychange = []
 no_of_invaders = 8
- 
-for num in range(no_of_invaders):
-    invaderImage.append(pygame.image.load('data/alien.png'))
-    invader_X.append(random.randint(64, 737))
-    invader_Y.append(random.randint(30, 180))
-    #invader_Xchange.append(1.2)
-    invader_Xchange.append(0.2)
-    invader_Ychange.append(50)
- 
-# Bullet
-# rest - bullet is not moving
-# fire - bullet is moving
+
+#bullets:
 bulletImage = pygame.image.load('data/bullet.png')
 bullet_X = 0
 bullet_Y = 500
@@ -77,29 +56,56 @@ bullet_Xchange = 0
 bullet_Ychange = 3
 bullet_state = "rest"
 
+running = True
 
-def set_global_var():
+#################functions---------------------------------------------------
+##############################################
+#show_score
+##############################################
+def show_score(x, y):
+    score = font.render("Points: " + str(score_val),
+                        True, (255,255,255))
+    screen.blit(score, (x , y ))
 
-    # player
-    global playerImage 
-    global player_X 
-    global player_Y 
-    global player_Xchange 
- 
-# Invader
+##############################################
+#game_over
+############################################## 
+def game_over():
+    game_over_text = game_over_font.render("GAME OVER",
+                                           True, (255,255,255))
+    screen.blit(game_over_text, (190, 250))
+
+##############################################
+#create_invaders
+##############################################
+def create_invaders():
+    global no_of_invaders
     global invaderImage 
     global invader_X 
     global invader_Y 
     global invader_Xchange 
     global invader_Ychange 
-    global no_of_invaders 
-    global bulletImage 
-    global bullet_X 
-    global bullet_Y 
-    global bullet_Xchange 
-    global bullet_Ychange 
-    global bullet_state 
-# Collision Concept
+
+    for num in range(no_of_invaders):
+        invaderImage.append(pygame.image.load('data/alien.png'))
+        invader_X.append(random.randint(64, 737))
+        invader_Y.append(random.randint(30, 180))
+        invader_Xchange.append(0.2)
+        invader_Ychange.append(50)
+ 
+
+##############################################
+#for copy pasta
+##############################################
+def set_global_var():
+
+    # player
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state , score_val
+
+##############################################
+#check_collision
+##############################################
 def isCollision(x1, x2, y1, y2):
     distance = math.sqrt((math.pow(x1 - x2,2)) +
                          (math.pow(y1 - y2,2)))
@@ -107,41 +113,70 @@ def isCollision(x1, x2, y1, y2):
         return True
     else:
         return False
- 
+
+##############################################
+#draw player
+############################################## 
 def player(x, y):
     screen.blit(playerImage, (x - 16, y + 10))
- 
+
+##############################################
+#draw invader
+############################################## 
 def invader(x, y, i):
     screen.blit(invaderImage[i], (x, y))
- 
+
+##############################################
+#draw bullet
+############################################## 
 def bullet(x, y):
     global bullet_state
     screen.blit(bulletImage, (x, y))
     bullet_state = "fire"
  
-# game loop
-running = True
+##############################################
+#update screen
+############################################## 
 def update_screen():
     screen.fill((0, 0, 0))
 
+##############################################
+#exit cond
+############################################## 
 def check_exit(event):
     global running
     if event.type == pygame.QUIT:
         running = False
 
+##############################################
+#check left
+############################################## 
 def check_left_key(event):
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
+    
+    if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_LEFT:
-            print("left key")
             player_Xchange = -1.7
-            print(player_Xchange)
 
+##############################################
+#check right
+############################################## 
 def check_right_key(event):
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
+
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_RIGHT:
-            return 1.7
-    else: return 0
-
+            player_Xchange = 1.7
+            
+##############################################
+#check fire
+############################################## 
 def check_fire(event):
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
+
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_SPACE:
         
@@ -152,61 +187,48 @@ def check_fire(event):
                 bullet_sound = mixer.Sound('data/bullet.wav')
                 bullet_sound.play()
 
-def move_player():
-    global running
-    global playerImage 
-    global player_X 
-    global player_Y 
-    global player_Xchange 
- 
-# Invader
-    global invaderImage 
-    global invader_X 
-    global invader_Y 
-    global invader_Xchange 
-    global invader_Ychange 
-    global no_of_invaders 
-    global bulletImage 
-    global bullet_X 
-    global bullet_Y 
-    global bullet_Xchange 
-    global bullet_Ychange 
-    global bullet_state 
+##############################################
+#check no key
+############################################## 
+def check_no_key(event):
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
+        
+    if event.type == pygame.KEYUP:
+        player_Xchange = 0
+
+##############################################
+#control player
+############################################## 
+def control_player():
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
 
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
- 
-        # Controlling the player movement
-        # from the arrow keys
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                player_Xchange = -1.7
-            if event.key == pygame.K_RIGHT:
-                player_Xchange = 1.7
-            if event.key == pygame.K_SPACE:
-               
-                # Fixing the change of direction of bullet
-                if bullet_state is "rest":
-                    bullet_X = player_X
-                    bullet(bullet_X, bullet_Y)
-                    bullet_sound = mixer.Sound('data/bullet.wav')
-                    bullet_sound.play()
-        if event.type == pygame.KEYUP:
-            player_Xchange = 0
-            
-    # adding the change in the player position
+        check_left_key(event)
+        check_right_key(event)
+        check_fire(event)
+        check_no_key(event)
+        
+    move_player()
+
+##############################################
+#move player
+##############################################              
+def move_player():
+    global player_X, player_Xchange
+
     player_X += player_Xchange
 
+##############################################
+#move bullet
+##############################################  
 def move_bullet():
-
-    global bulletImage 
-    global bullet_X 
-    global bullet_Y 
-    global bullet_Xchange 
-    global bullet_Ychange 
-    global bullet_state 
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
 
         # bullet movement
     if bullet_Y <= 0:
@@ -216,24 +238,12 @@ def move_bullet():
         bullet(bullet_X, bullet_Y)
         bullet_Y -= bullet_Ychange
 
-
+##############################################
+#move invader
+##############################################    
 def move_invader():
-
-    global invaderImage 
-    global invader_X 
-    global invader_Y 
-    global invader_Xchange 
-    global invader_Ychange 
-    global no_of_invaders 
-    global bulletImage 
-    global bullet_X 
-    global bullet_Y 
-    global bullet_Xchange 
-    global bullet_Ychange 
-    global bullet_state 
-    global score_val
-    global scoreX 
-    global scoreY 
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state , score_val
 
     for i in range(no_of_invaders):
         invader_X[i] += invader_Xchange[i]
@@ -272,11 +282,12 @@ def move_invader():
                 
         invader(invader_X[i], invader_Y[i], i)
 
+##############################################
+#check bounds
+##############################################    
 def check_bounds():
-    global playerImage 
-    global player_X 
-    global player_Y 
-    global player_Xchange 
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
  
     if player_X <= 16:
         player_X = 16
@@ -284,11 +295,21 @@ def check_bounds():
         player_X = 750
     player(player_X, player_Y)
 
-while running: 
-    update_screen()
-    move_player()
-    move_invader()
-    move_bullet()
-    check_bounds()
-    show_score(scoreX, scoreY)
-    pygame.display.update()
+##############################################
+#main
+##############################################    
+def main():
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
+    
+    while running: 
+        create_invaders()
+        update_screen()
+        control_player()
+        move_invader()
+        move_bullet()
+        check_bounds()
+        show_score(scoreX, scoreY)
+        pygame.display.update()
+
+main()
