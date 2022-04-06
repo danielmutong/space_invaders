@@ -145,6 +145,7 @@ def update_screen():
 ############################################## 
 def check_exit(event):
     global running
+    
     if event.type == pygame.QUIT:
         running = False
 
@@ -274,23 +275,29 @@ def move_invader():
             #invader_Xchange[i] *= -1
             #speed up if score exceeds
             if score_val == 5:
-                for y in range(no_of_invaders):
-                    if invader_Xchange[y] > 0:
-                        invader_Xchange[y] += 1
-                    else:
-                       invader_Xchange[y] -= 1 
+                increase_invader_speed()
             if score_val == 10:
-                for y in range(no_of_invaders):
-                    if invader_Xchange[y] > 0:
-                        invader_Xchange[y] += 1
-                    else:
-                       invader_Xchange[y] -= 1 
-                       
+                increase_invader_speed()
+
             for num in range(no_of_invaders):
                 print(str(round(invader_Xchange[num],2)) + '  ', end = '')   
             print('\n')                             
                 
         invader(invader_X[i], invader_Y[i], i)
+
+
+##############################################
+#increase_invader_speed
+##############################################   
+def increase_invader_speed():
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
+        
+    for y in range(no_of_invaders):
+        if invader_Xchange[y] > 0:
+            invader_Xchange[y] += 1
+        else:
+            invader_Xchange[y] -= 1 
 
 ##############################################
 #check bounds
@@ -311,9 +318,10 @@ def check_bounds():
 def main():
     global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
     ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state 
-    
+  
+    create_invaders()
     while running: 
-        create_invaders()
+        
         update_screen()
         control_player()
         move_invader()
