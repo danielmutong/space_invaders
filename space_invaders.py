@@ -247,7 +247,7 @@ def move_invader():
 
     for i in range(no_of_invaders):
         invader_X[i] += invader_Xchange[i]
-
+        
     for i in range(no_of_invaders):
         
         if invader_Y[i] >= 450:
@@ -275,7 +275,20 @@ def move_invader():
             #speed up if score exceeds
             if score_val == 5:
                 for y in range(no_of_invaders):
-                    invader_Xchange[y] += 1            
+                    if invader_Xchange[y] > 0:
+                        invader_Xchange[y] += 1
+                    else:
+                       invader_Xchange[y] -= 1 
+            if score_val == 10:
+                for y in range(no_of_invaders):
+                    if invader_Xchange[y] > 0:
+                        invader_Xchange[y] += 1
+                    else:
+                       invader_Xchange[y] -= 1 
+                       
+            for num in range(no_of_invaders):
+                print(str(round(invader_Xchange[num],2)) + '  ', end = '')   
+            print('\n')                             
                 
         invader(invader_X[i], invader_Y[i], i)
 
