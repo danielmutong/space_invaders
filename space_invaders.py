@@ -53,7 +53,7 @@ bulletImage = pygame.image.load('data/bullet.png')
 bullet_X = 0
 bullet_Y = 500
 bullet_Xchange = 0
-bullet_Ychange = 3
+bullet_Ychange = 10
 bullet_state = "rest"
 
 running = True
@@ -271,14 +271,11 @@ def move_invader():
             bullet_state = "rest"
             invader_X[i] = random.randint(64, 736)
             invader_Y[i] = random.randint(30, 200)
-            invader_Xchange[i] *= -1
+            #invader_Xchange[i] *= -1
             #speed up if score exceeds
-            if score_val == 10:
-                for num in range(no_of_invaders):
-                    invader_Xchange[num] += 0.5
-            elif score_val == 20:
-                for num in range(no_of_invaders):
-                    invader_Xchange[num] += 0.5                
+            if score_val == 5:
+                for y in range(no_of_invaders):
+                    invader_Xchange[y] += 1            
                 
         invader(invader_X[i], invader_Y[i], i)
 
