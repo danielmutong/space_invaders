@@ -90,7 +90,7 @@ def create_invaders():
         invaderImage.append(pygame.image.load('data/alien.png'))
         invader_X.append(random.randint(64, 737))
         invader_Y.append(random.randint(30, 180))
-        invader_Xchange.append(0.2)
+        invader_Xchange.append(1)
         invader_Ychange.append(50)
  
 
@@ -240,6 +240,67 @@ def move_bullet():
         bullet_Y -= bullet_Ychange
 
 ##############################################
+#check game over
+##############################################  
+def check_game_over(i):
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state , score_val
+
+    if invader_Y[i] >= 450:
+        if abs(player_X-invader_X[i]) < 80:
+            for j in range(no_of_invaders):
+                invader_Y[j] = 2000
+                explosion_sound = mixer.Sound('data/explosion.wav')
+                explosion_sound.play()
+            return 1
+    return 0
+
+##############################################
+#check if invader goes out of bounds
+##############################################  
+def check_invader_y_bounds(i):
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state , score_val
+
+    if invader_X[i] >= 735.0 or invader_X[i] <= 0:
+        invader_Xchange[i] *= -1
+        invader_Y[i] += invader_Ychange[i]    
+
+##############################################
+#collision results
+##############################################  
+def reset_invader(i):
+    global running, playerImage, player_X, player_Y , player_Xchange , invaderImage , invader_X ,invader_Y,invader_Xchange \
+    ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state , score_val
+
+    invader_X[i] = random.randint(64, 736)
+    invader_Y[i] = random.randint(30, 200)
+
+##############################################
+#increase_score
+############################################## 
+def increase_score():
+    global score_val
+
+    score_val += 1
+
+##############################################
+#reset_bullet
+##############################################    
+def reset_bullet():
+    global bullet_Y, bullet_state
+
+    bullet_Y = 600
+    bullet_state = "rest"
+
+##############################################
+#move_invader_x
+##############################################   
+def move_invader_x(i):
+    global invader_X, invader_Xchange
+
+    invader_X[i] += invader_Xchange[i]
+##############################################
 #move invader
 ##############################################    
 def move_invader():
@@ -247,41 +308,27 @@ def move_invader():
     ,invader_Ychange ,no_of_invaders ,bulletImage ,bullet_X ,bullet_Y ,bullet_Xchange ,bullet_Ychange ,bullet_state , score_val
 
     for i in range(no_of_invaders):
-        invader_X[i] += invader_Xchange[i]
+        move_invader_x(i)
         
     for i in range(no_of_invaders):
-        
-        if invader_Y[i] >= 450:
-            if abs(player_X-invader_X[i]) < 80:
-                for j in range(no_of_invaders):
-                    invader_Y[j] = 2000
-                    explosion_sound = mixer.Sound('data/explosion.wav')
-                    explosion_sound.play()
-                game_over()
-                break
+        if check_game_over(i):
+            game_over()
+            break
 
-        if invader_X[i] >= 735.0 or invader_X[i] <= 0:
-            invader_Xchange[i] *= -1
-            invader_Y[i] += invader_Ychange[i]
+        check_invader_y_bounds(i)
         # Collision
         collision = isCollision(bullet_X, invader_X[i],
                                 bullet_Y, invader_Y[i])
         if collision:
-            score_val += 1
-            bullet_Y = 600
-            bullet_state = "rest"
-            invader_X[i] = random.randint(64, 736)
-            invader_Y[i] = random.randint(30, 200)
-            #invader_Xchange[i] *= -1
+            increase_score()
+            reset_bullet()
+            reset_invader(i)
             #speed up if score exceeds
             if score_val == 5:
                 increase_invader_speed()
             if score_val == 10:
                 increase_invader_speed()
-
-            for num in range(no_of_invaders):
-                print(str(round(invader_Xchange[num],2)) + '  ', end = '')   
-            print('\n')                             
+                            
                 
         invader(invader_X[i], invader_Y[i], i)
 
